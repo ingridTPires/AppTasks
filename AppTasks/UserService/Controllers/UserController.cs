@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MassTransit;
+using Microsoft.AspNetCore.Mvc;
+using Shared.Events;
 using UserService.Models;
 using UserService.Repositories;
 
@@ -9,9 +11,11 @@ namespace UserService.Controllers
     public class UserController : Controller
     {
         private readonly IUserRepository _repository;
-        public UserController(IUserRepository repository)
+        private readonly IPublishEndpoint _publishEndpoint;
+        public UserController(IUserRepository repository, IPublishEndpoint publishEndpoint)
         {
             _repository = repository;
+            _publishEndpoint = publishEndpoint;
         }
 
         [HttpGet]
@@ -26,6 +30,9 @@ namespace UserService.Controllers
             }
 
             await _repository.Create(user);
+
+            await _publishEndpoint.Publish(new UserCreated() { Id = user.Id, Name = user.Name, Email = user.Email });
+
             return CreatedAtAction(nameof(Get), new { id = user.Id }, user);
         }
     }

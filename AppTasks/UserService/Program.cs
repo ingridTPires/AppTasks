@@ -1,3 +1,4 @@
+using MassTransit;
 using UserService.Models;
 using UserService.Repositories;
 
@@ -11,6 +12,12 @@ namespace UserService
 
             builder.Services.Configure<DBSettings>(
             builder.Configuration.GetSection("DBSettings"));
+
+            builder.Services.AddMassTransit(x =>
+            {
+                x.UsingRabbitMq();
+            });
+
             builder.Services.AddSingleton<IUserRepository, UserRepository>();
 
             builder.Services.AddControllers();

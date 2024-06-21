@@ -1,17 +1,15 @@
-﻿using Microsoft.Extensions.Options;
-using MongoDB.Driver;
-using UserService.Models;
+﻿using MongoDB.Driver;
+using Shared.Data;
+using Shared.Models;
 
 namespace UserService.Repositories
 {
     public class UserRepository : IUserRepository
     {
         private readonly IMongoCollection<User> _collection;
-        public UserRepository(IOptions<DBSettings> dbSetting)
+        public UserRepository(DbContext context)
         {
-            var client = new MongoClient(dbSetting.Value.ConnectionString);
-            var db = client.GetDatabase(dbSetting.Value.DatabaseName);
-            _collection = db.GetCollection<User>(dbSetting.Value.CollectionName);
+            _collection = context.Users;
         }
 
         public async Task<List<User>> Get() => await _collection.Find(_ => true).ToListAsync();

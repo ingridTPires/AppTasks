@@ -1,5 +1,5 @@
 using MassTransit;
-using UserService.Models;
+using Shared.Data;
 using UserService.Repositories;
 
 namespace UserService
@@ -10,15 +10,14 @@ namespace UserService
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            builder.Services.Configure<DBSettings>(
-            builder.Configuration.GetSection("DBSettings"));
+            builder.Services.Configure<DBSettings>(builder.Configuration.GetSection("DBSettings"));
+            builder.Services.AddSingleton<DbContext>();
+            builder.Services.AddSingleton<IUserRepository, UserRepository>();
 
             builder.Services.AddMassTransit(x =>
             {
                 x.UsingRabbitMq();
             });
-
-            builder.Services.AddSingleton<IUserRepository, UserRepository>();
 
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();

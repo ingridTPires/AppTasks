@@ -1,7 +1,7 @@
 ﻿using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Events;
-using UserService.Models;
+using Shared.Models;
 using UserService.Repositories;
 
 namespace UserService.Controllers

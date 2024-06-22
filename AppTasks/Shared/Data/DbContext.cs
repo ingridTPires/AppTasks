@@ -15,5 +15,6 @@ namespace Shared.Data
         }
 
         public IMongoCollection<User> Users => _database.GetCollection<User>("Users");
+        public IMongoCollection<UserTask> Tasks => _database.GetCollection<UserTask>("Tasks");
     }
 }

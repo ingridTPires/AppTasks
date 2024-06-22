@@ -11,8 +11,6 @@ namespace NotificationService
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddControllers();
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
 
             builder.Services.AddMassTransit(x =>
             {
@@ -29,12 +27,6 @@ namespace NotificationService
             builder.Services.AddSingleton<IMailService, MailService>();
 
             var app = builder.Build();
-
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
 
             app.UseHttpsRedirection();
 

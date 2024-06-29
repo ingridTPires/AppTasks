@@ -1,5 +1,6 @@
 using MassTransit;
 using NotificationService.Consumers;
+using NotificationService.Models;
 using NotificationService.Service;
 
 namespace NotificationService
@@ -24,7 +25,8 @@ namespace NotificationService
                 });
             });
 
-            builder.Services.AddSingleton<IMailService, MailService>();
+            builder.Services.Configure<SmtpOptions>(builder.Configuration.GetSection("Smtp"));
+            builder.Services.AddSingleton<IMailService, SmtpMailService>();
 
             var app = builder.Build();
 

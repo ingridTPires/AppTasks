@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MassTransit;
+using Microsoft.AspNetCore.Mvc;
+using Shared.Events;
 using Shared.Models;
 using TaskService.Repositories;
 
@@ -9,9 +11,11 @@ namespace TaskService.Controllers
     public class TaskController : Controller
     {
         private readonly ITaskRepository _repository;
-        public TaskController(ITaskRepository repository)
+        private readonly IPublishEndpoint _publishEndpoint;
+        public TaskController(ITaskRepository repository, IPublishEndpoint publishEndpoint)
         {
             _repository = repository;
+            _publishEndpoint = publishEndpoint;
         }
 
         [HttpGet]
@@ -26,6 +30,21 @@ namespace TaskService.Controllers
             }
 
             await _repository.Create(task);
+
+            var userMail = await _repository.GetUserMail(task.UserId);
+
+            if (string.IsNullOrEmpty(userMail))
+            {
+                return BadRequest("Usuário não localizado");
+            }
+
+            await _publishEndpoint.Publish(new UserTaskCreated()
+            {
+                Id = task.Id,
+                Title = task.Title,
+                Description = task.Description,
+                UserMail = userMail
+            });
 
             return CreatedAtAction(nameof(Get), new { id = task.Id }, task);
         }

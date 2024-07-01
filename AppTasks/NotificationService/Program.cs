@@ -16,11 +16,17 @@ namespace NotificationService
             builder.Services.AddMassTransit(x =>
             {
                 x.AddConsumer<UserCreatedConsumer>();
+                x.AddConsumer<UserTaskCreatedConsumer>();
+
                 x.UsingRabbitMq((context, cfg) =>
                 {
                     cfg.ReceiveEndpoint("user-created-queue", e =>
                     {
                         e.ConfigureConsumer<UserCreatedConsumer>(context);
+                    });
+                    cfg.ReceiveEndpoint("task-created-queue", e =>
+                    {
+                        e.ConfigureConsumer<UserTaskCreatedConsumer>(context);
                     });
                 });
             });

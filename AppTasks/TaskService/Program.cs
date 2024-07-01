@@ -1,3 +1,4 @@
+using MassTransit;
 using Shared.Data;
 using TaskService.Repositories;
 
@@ -12,6 +13,11 @@ namespace TaskService
             builder.Services.Configure<DBSettings>(builder.Configuration.GetSection("DBSettings"));
             builder.Services.AddSingleton<DbContext>();
             builder.Services.AddSingleton<ITaskRepository, TaskRepository>();
+
+            builder.Services.AddMassTransit(x =>
+            {
+                x.UsingRabbitMq();
+            });
 
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
